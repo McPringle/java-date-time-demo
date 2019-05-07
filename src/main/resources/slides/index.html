@@ -1,0 +1,305 @@
+<!doctype html>
+<html lang="en">
+
+	<head>
+		<meta charset="utf-8">
+
+		<title>Java 8 Date &amp; Time API</title>
+
+		<meta name="description" content="A presentation to my Date &amp; Time API workshop.">
+		<meta name="author" content="Marcus Fihlon">
+
+		<meta name="apple-mobile-web-app-capable" content="yes" />
+		<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+		<link rel="stylesheet" href="css/reveal.min.css">
+		<link rel="stylesheet" href="css/theme/default.css" id="theme">
+
+		<!-- For syntax highlighting -->
+		<link rel="stylesheet" href="lib/css/zenburn.css">
+
+		<!-- If the query includes 'print-pdf', include the PDF print sheet -->
+		<script>
+			if( window.location.search.match( /print-pdf/gi ) ) {
+				var link = document.createElement( 'link' );
+				link.rel = 'stylesheet';
+				link.type = 'text/css';
+				link.href = 'css/print/pdf.css';
+				document.getElementsByTagName( 'head' )[0].appendChild( link );
+			}
+		</script>
+
+		<!--[if lt IE 9]>
+		<script src="lib/js/html5shiv.js"></script>
+		<![endif]-->
+	</head>
+
+	<body>
+
+		<div class="reveal">
+
+			<div class="slides">
+				<section>
+					<h1>Java 8</h1>
+					<h2>Date &amp; Time API</h2>
+                    <h3>Marcus Fihlon, 8. Mai 2019</h3>
+				</section>
+
+                <section>
+                    <h2>Ich</h2>
+                    <ul>
+                        <li>Über 30 Jahre Erfahrung als Software-Entwickler</li>
+                        <li>Über 20 Jahre Erfahrung im Java-Umfeld</li>
+                        <li>Seit 2008 in der Schweiz lebend</li>
+                        <li>Seit 2013 bei der CSS Versicherung in Luzern</li>
+						<li>Dozent an der TEKO Schweizerische Fachschule</li>
+						<li>Autor von Fachartikeln und Fachbüchern</li>
+						<li>Speaker an internationalen Konferenzen</li>
+						<li>Hackergarten, Java User Group Switzerland, iJUG, Kotlin Swiss User Group,
+							Voxxed Days Zürich, BaselOne, JavaLand</li>
+						<li>Fat Man Cycling</li>
+                    </ul>
+                </section>
+
+                <section>
+					<h2>java.util.Date</h2>
+					<ul>
+						<li class="fragment"><code>Date</code> gibt es seit 23. Januar 1996</li>
+						<li class="fragment">Es gibt viele gute Diskussionen der Probleme mit <code>Date</code></li>
+						<li class="fragment"><code>Date</code> Objekte sind mutierbar</li>
+						<li class="fragment"><code>Date</code> ist eigentlich ein <code>DateTime</code></li>
+						<li class="fragment">Es gibt andere <code>Date</code> Klassen f&uuml;r SQL</li>
+						<li class="fragment"><code>Date</code> hat keine Unterst&uuml;tzung von Zeitzonen</li>
+						<li class="fragment"><code>Date</code> ist nicht einfach zu nutzen</li>
+					</ul>
+				</section>
+
+				<section>
+					<h2>java.util.Calendar</h2>
+					<ul>
+						<li class="fragment">Immer noch mutierbar</li>
+						<li class="fragment">Kann ein Datum nicht direkt formatieren</li>
+						<li class="fragment">Das Ausf&uuml;hren arithmetischer Operationen wird nicht eindeutig unterst&uuml;tzt, beispielsweise Differenz zwischen zwei Zeitpunkten</li>
+					</ul>
+				</section>
+
+				<section>
+					<section>
+						<h2>Wie viele Bugs enth&auml;lt dieser Code?</h2>
+<pre><code data-trim contenteditable>
+Date date = new Date(2014, 12, 13, 16, 60);
+
+TimeZone zone = TimeZone.getTimeZone("Asia/HongKong");
+
+Calendar cal = new GregorianCalendar(date, zone);
+
+DateFormat fm = new SimpleDateFormat("HH:mm Z");
+
+String str = fm.format(cal);
+</code></pre>
+					</section>
+					<section>
+						<h2>Die Aufl&ouml;sung</h2>
+						<ol>
+							<li class="fragment">Das Jahr basiert auf 1900, 2014 ist also 3914</li>
+							<li class="fragment">Der Monat basiert auf 0, 11 ist Dezember, 12 wird zu Januar im Folgejahr</li>
+							<li class="fragment">Aus 60 Minuten wird eine Stunde, die der angegebenen Stunde zugeschlagen wird</li>
+							<li class="fragment">Aus dem Datum 13. Dezember 2014 16:60 Uhr wird daher der 13. Januar 3915 17:00 Uhr</li>
+							<li class="fragment">Bei Zeitzonen werden Leerzeichen durch Unterstriche ersetzt: &quot;Asia/Hong_Kong&quot;</li>
+							<li class="fragment"><code>GregorianCalendar</code> l&auml;sst sich nicht mit einem <code>Date</code> initialisieren</li>
+							<li class="fragment"><code>Calendar</code> Instanzen k&ouml;nnen nicht formatiert werden</li>
+						</ol>
+					</section>
+				</section>
+
+				<section>
+					<h2>Alles neu</h2>
+					<ul>
+						<li class="fragment">Neues Package <code>java.time</code></li>
+						<li class="fragment">Neue Objekte f&uuml;r Datums- und Zeitangaben
+							<ul>
+								<li class="fragment"><code>LocalDate</code> &ndash; lokales Datum (ohne Zeit)</li>
+								<li class="fragment"><code>LocalTime</code> &ndash; lokale Zeit (ohne Datum)</li>
+								<li class="fragment"><code>LocalDateTime</code> &ndash; lokales Datum mit Zeit</li>
+								<li class="fragment"><code>ZonedDateTime</code> &ndash; Datum mit Zeit und Zeitzone</li>
+								<li class="fragment">Und noch <em>viele</em> mehr&hellip;</li>
+							</ul>
+						</li>
+						<li class="fragment">Immutability</li>
+						<li class="fragment">Modernes API-Design</li>
+					</ul>
+				</section>
+
+				<section>
+                    <h1>Live Coding</h1>
+                    <h2>Beispiel 1</h2>
+				</section>
+				
+				<section>
+					<h2>Mit Datums- und Zeitangaben arbeiten</h2>
+					<ul>
+						<li class="fragment"><code>Instant</code> &ndash; vergleichbar mit <code>java.util.Date</code></li>
+						<li class="fragment"><code>Duration</code> &ndash; eine zeitbasierte Menge, z.B. 34.5 Sekunden</li>
+						<li class="fragment"><code>Period</code> &ndash; eine datumsbasierte Menge, z.B. 1 Monat, 5 Tage</li>
+						<li class="fragment">Differenzen sind besonders wichtig bei der Arbeit mit <code>ZonedDateTime</code> Operationen</li>
+					</ul>
+				</section>
+				
+				<section>
+					<h2>java.util.Date</h2>
+					<ul>
+						<li class="fragment">Statt <code>java.util.Date</code> kann <code>Instant</code> verwendet werden</li>
+						<li class="fragment"><code>java.util.Date</code> bietet die neue Methode <code>toInstant()</code></li>
+					</ul>
+				</section>
+				
+				<section>
+					<h2>TemporalAdjuster</h2>
+					<ul>
+						<li class="fragment">K&ouml;nnen temporale Objekte modifizieren</li>
+						<li class="fragment">Kapseln den Prozess der Anpassung</li>
+						<li class="fragment">Erlauben unterschiedliche Ans&auml;tze</li>
+						<li class="fragment">Folgen dem <em>Strategy Design Pattern</em></li>
+					</ul>
+				</section>
+				
+				<section>
+					<h2>TemporalAdjusters</h2>
+					<p>
+						Standardfunktionen, verf&uuml;gbar als statische Methoden.
+					</p>
+					<ul>
+						<li class="fragment">den ersten oder letzten Tag eines Monats</li>
+						<li class="fragment">den ersten Tag des n&auml;chsten Monats</li>
+						<li class="fragment">den ersten oder letzten Tag des Jahres</li>
+						<li class="fragment">den ersten Tag des n&auml;chsten Jahres</li>
+						<li class="fragment">den ersten oder letzten Wochentag in einem Monat<br/>z.B. erster Mittwoch im Juni</li>
+						<li class="fragment">den n&auml;chsten oder vorhergehenden Wochentag<br/>z.B. n&auml;chster Donnerstag</li>
+					</ul>
+				</section>
+				
+				<section>
+                    <h1>Live Coding</h1>
+                    <h2>Beispiel 2</h2>
+				</section>
+				
+				<section>
+					<h2>Parsen und Formatieren</h2>
+					<ul>
+						<li class="fragment">
+							<code>DateTimeFormatter</code> bietet viele vordefinierte Pattern
+							<ul>
+								<li class="fragment"><code>DateTimeFormatter.ISO_TIME</code><br/><small>10:15:30+01:00</small></li>
+								<li class="fragment"><code>DateTimeFormatter.ISO_DATE_TIME</code><br/><small>2011-12-03T10:15:30+01:00[Europe/Paris]</small></li>
+								<li class="fragment"><code>DateTimeFormatter.ISO_LOCAL_DATE</code><br/><small>2011-12-03</small></li>
+								<li class="fragment"><code>DateTimeFormatter.RFC_1123_DATE_TIME</code><br/><small>Tue, 3 Jun 2008 11:05:30 GMT</small></li>
+								<li class="fragment">Und noch <em>viele</em> mehr&hellip;</li>
+							</ul>
+						</li>
+						<li class="fragment">Es k&ouml;nnen eigene Pattern erstellt werden</li>
+						<li class="fragment">Es stehen <code>format()</code> und <code>parse()</code> Methoden zur Verf&uuml;gung</li>
+					</ul>
+				</section>
+				
+				<section>
+                    <h1>Live Coding</h1>
+                    <h2>Beispiel 3</h2>
+				</section>
+				
+				<section>
+					<h2>TemporalQuery</h2>
+					<ul>
+						<li class="fragment">Extrahieren von Informationen von temporalen Objekten</li>
+						<li class="fragment">Kapselt den Abfrageprozess</li>
+						<li class="fragment">Erlaubt verschiedene Ans&auml;tze</li>
+						<li class="fragment">Folgt dem <em>Strategy Design Pattern</em></li>
+					</ul>
+				</section>
+				
+				<section>
+					<h1>Live Coding</h1>
+                    <h2>Beispiel 4</h2>
+				</section>
+				
+				<section>
+					<h2>Quellen</h2>
+					<ul>
+                        <li>
+                            Java 8 API Documentation<br />
+                            <small><a href="http://docs.oracle.com/javase/8/docs/api/">http://docs.oracle.com/javase/8/docs/api/</a></small>
+                        </li>
+                        <li>
+                            The Java Tutorials<br />
+                            <small><a href="http://docs.oracle.com/javase/tutorial/">http://docs.oracle.com/javase/tutorial/</a></small>
+                        </li>
+                        <li>
+                            London Java Community<br />
+                            <small><a href="http://www.meetup.com/Londonjavacommunity/">http://www.meetup.com/Londonjavacommunity/</a></small>
+                        </li>
+						<li>
+                            Jim Gough<br />
+                            <small><a href="https://twitter.com/JavaJimLondon">https://twitter.com/JavaJimLondon</a></small>
+                        </li>
+					</ul>
+				</section>
+
+                <section>
+                    <h2>In eigener Sache</h2>
+                    <ul>
+						<li>
+							Hackergarten in Luzern<br />
+							<small><a target="_blank" href="http://www.meetup.com/Hackergarten-Luzern/">http://www.meetup.com/Hackergarten-Luzern/</a></small>
+						</li>
+                        <li>
+                            Fat Man Cycling<br />
+                            <small><a target="_blank" href="https://fatmancycling.tours/">https://fatmancycling.tours/</a></small>
+                        </li>
+                    </ul>
+                </section>
+				
+				<section>
+					<h1>THE END</h1>
+					<h3>Copyright &copy; Marcus Fihlon</h3>
+				</section>
+
+			</div>
+
+		</div>
+
+		<script src="lib/js/head.min.js"></script>
+		<script src="js/reveal.min.js"></script>
+
+		<script>
+
+			// Full list of configuration options available here:
+			// https://github.com/hakimel/reveal.js#configuration
+			Reveal.initialize({
+				controls: true,
+				progress: true,
+				history: true,
+				center: true,
+
+				theme: Reveal.getQueryHash().theme, // available themes are in /css/theme
+				transition: Reveal.getQueryHash().transition || 'default', // default/cube/page/concave/zoom/linear/fade/none
+
+				// Parallax scrolling
+				// parallaxBackgroundImage: 'https://s3.amazonaws.com/hakim-static/reveal-js/reveal-parallax-1.jpg',
+				// parallaxBackgroundSize: '2100px 900px',
+
+				// Optional libraries used to extend on reveal.js
+				dependencies: [
+					{ src: 'lib/js/classList.js', condition: function() { return !document.body.classList; } },
+					{ src: 'plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: 'plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: 'plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } },
+					{ src: 'plugin/zoom-js/zoom.js', async: true, condition: function() { return !!document.body.classList; } },
+					{ src: 'plugin/notes/notes.js', async: true, condition: function() { return !!document.body.classList; } }
+				]
+			});
+
+		</script>
+
+	</body>
+</html>

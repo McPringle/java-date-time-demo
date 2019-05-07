@@ -1,0 +1,7 @@
+= _Java 8 Date & Time API Demo_
+
+image:https://masterminds.github.io/stability/active.svg[Stability: Active,link=https://masterminds.github.io/stability/active.html] image:https://img.shields.io/badge/gitmoji-%20😜%20😍-FFDD67.svg[gitmoji,link=https://gitmoji.carloscuesta.me]
+
+*Demo code and presentation slides for my talk.*
+
+_Copyright (C) 2014-2019 Marcus Fihlon_
